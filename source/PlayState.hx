@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
@@ -13,8 +14,8 @@ import openfl.Assets;
 class PlayState extends FlxState
 {
 	private static inline var TILE_SIZE:Int = 20;
-	private static inline var WIDTH_IN_TILES:Int = 50;
-	private static inline var HEIGHT_IN_TILES:Int = 20;
+	private static inline var WIDTH_IN_TILES:Int = 300;
+	private static inline var HEIGHT_IN_TILES:Int = 100;
 	
 	private var player:Player;
 	
@@ -28,36 +29,41 @@ class PlayState extends FlxState
 		player = new Player(10, 10);
 		player.solid = true;
 		
-		generateLevel();
+		loadLevel();
+		
+		add(player);
+		FlxG.camera.setScrollBounds(0, TILE_SIZE * WIDTH_IN_TILES, 0, TILE_SIZE * HEIGHT_IN_TILES);
+		FlxG.camera.follow(player);
 		
 		super.create();
 	}
 	
-	private function generateLevel()
+	private function loadLevel()
 	{
 		tileMap = new FlxTilemap();
 		
-		Assets.loadText('assets/data/map.txt', function(s:String)
+		var s:String = Assets.getText('assets/data/map.txt');
+		
+		map = new Array<Array<Int>>();
+		var lines:Array<String> = s.split('\n');
+		
+		for (i in 0...HEIGHT_IN_TILES)
 		{
-			map = new Array<Array<Int>>();
-			var lines:Array<String> = s.split('\n');
+			if (lines.length == i) break;
 			
-			for (i in 0...HEIGHT_IN_TILES)
+			map[i] = new Array<Int>();
+			var chars:Array<String> = lines[i].split(',');
+			
+			for (j in 0...WIDTH_IN_TILES)
 			{
-				map[i] = new Array<Int>();
-				var chars:Array<String> = lines[i].split(',');
+				if (chars.length == j) break;
 				
-				for (j in 0...WIDTH_IN_TILES)
-				{
-					map[i][j] = Std.parseInt(chars[j]);
-				}
+				map[i][j] = Std.parseInt(chars[j]);
 			}
-			
-			tileMap.loadMapFrom2DArray(map, 'assets/images/simpletiles.png', TILE_SIZE, TILE_SIZE, OFF, 0, 1, 1);
-			add(tileMap);
-			
-			add(player);
-		});
+		}
+		
+		tileMap.loadMapFrom2DArray(map, 'assets/images/simpletiles.png', TILE_SIZE, TILE_SIZE, OFF, 0, 1, 1);
+		add(tileMap);
 	}
 
 	override public function update(elapsed:Float):Void
