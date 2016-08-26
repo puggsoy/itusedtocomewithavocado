@@ -13,8 +13,8 @@ import openfl.Assets;
 
 class PlayState extends FlxState
 {
-	private static inline var TILE_SIZE:Int = 20;
-	private static inline var WIDTH_IN_TILES:Int = 300;
+	private static inline var TILE_SIZE:Int = 32;
+	private static inline var WIDTH_IN_TILES:Int = 200;
 	private static inline var HEIGHT_IN_TILES:Int = 100;
 	
 	private var player:Player;
@@ -26,7 +26,7 @@ class PlayState extends FlxState
 	{
 		FlxG.cameras.bgColor = 0xFFCCCCCC;
 		
-		player = new Player(10, 10);
+		player = new Player();
 		player.solid = true;
 		
 		loadLevel();
@@ -42,30 +42,62 @@ class PlayState extends FlxState
 	{
 		tileMap = new FlxTilemap();
 		
-		var s:String = Assets.getText('assets/data/map.txt');
+		var s:String = Assets.getText('assets/data/lvl1.tmx');
 		
-		map = new Array<Array<Int>>();
-		var lines:Array<String> = s.split('\n');
+		var mapXml:Xml = Xml.parse(s).firstElement();
 		
-		for (i in 0...HEIGHT_IN_TILES)
+		for (elem in mapXml.elements())
 		{
-			if (lines.length == i) break;
+			if (elem.nodeName == 'layer')
+			{
+				loadMap(elem.firstElement().firstChild().toString());
+			}
+			else
+			if (elem.nodeName == 'objectgroup')
+			{
+				if (elem.get('name').toLowerCase() == 'player')
+				{
+					var o:Xml = elem.firstElement();
+					player.x = Std.parseFloat(o.get('x'));
+					player.y = Std.parseFloat(o.get('y'));
+				}
+			}
+		}
+	}
+	
+	private function loadMap(csv:String)
+	{
+		map = new Array<Array<Int>>();
+		var lines:Array<String> = csv.split('\n');
+		
+		for (i in 0...lines.length)
+		{
+			if (map.length == HEIGHT_IN_TILES) break;
 			
-			map[i] = new Array<Int>();
 			var chars:Array<String> = lines[i].split(',');
+			chars = chars.filter(function(s:String){ return s.length != 0; });
+			
+			if (chars.length < WIDTH_IN_TILES) continue;
+			
+			var row:Array<Int> = new Array<Int>();
 			
 			for (j in 0...WIDTH_IN_TILES)
 			{
-				if (chars.length == j) break;
+				if (chars.length == j) throw 'Not enough columns!';
 				
-				map[i][j] = Std.parseInt(chars[j]);
+				row[j] = Std.parseInt(chars[j]);
 			}
+			
+			map.push(row);
 		}
 		
-		tileMap.loadMapFrom2DArray(map, 'assets/images/simpletiles.png', TILE_SIZE, TILE_SIZE, OFF, 0, 1, 1);
+		trace(map.length);
+		trace(map[0].length);
+		
+		tileMap.loadMapFrom2DArray(map, 'assets/images/simpletiles.png', TILE_SIZE, TILE_SIZE, OFF, 1, 1, 1);
 		add(tileMap);
 	}
-
+	
 	override public function update(elapsed:Float):Void
 	{
 		FlxG.collide(tileMap, player);
