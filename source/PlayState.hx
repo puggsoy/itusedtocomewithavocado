@@ -19,8 +19,8 @@ class PlayState extends FlxState
 	private static inline var WIDTH_IN_TILES:Int = 200;
 	private static inline var HEIGHT_IN_TILES:Int = 100;
 	
-	private static inline var LEVEL_FILE:String = 'assets/data/lvl2.tmx';
 	private static inline var TILES_FILE:String = 'assets/images/simple-tiles.png';
+	private var levelFile:String = 'assets/data/lvl#.tmx';
 	
 	private var map:Array<Array<Int>>;
 	private var tileMap:FlxTilemap;
@@ -28,9 +28,19 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var smashers:FlxSpriteGroup;
 	
+	public function new(level:Int = 1)
+	{
+		levelFile = StringTools.replace(levelFile, '#', Std.string(level));
+		super();
+	}
+	
 	override public function create():Void
 	{
-		FlxG.cameras.bgColor = 0xFFCCCCCC;
+		FlxG.cameras.bgColor = 0xFFFF00FF;
+		
+		var background:FlxSprite = new FlxSprite(0, 0, 'assets/images/parallax.png');
+		background.scrollFactor.set(0.1, 0.06);
+		add(background);
 		
 		player = new Player();
 		player.solid = true;
@@ -54,7 +64,7 @@ class PlayState extends FlxState
 	{
 		tileMap = new FlxTilemap();
 		
-		var s:String = Assets.getText(LEVEL_FILE);
+		var s:String = Assets.getText(levelFile);
 		
 		var mapXml:Xml = Xml.parse(s).firstElement();
 		
@@ -139,8 +149,7 @@ class PlayState extends FlxState
 	
 	override public function switchTo(nextState:FlxState):Bool 
 	{
-		trace('foo');
-		subState.close();
+		if(subState != null) subState.close();
 		return super.switchTo(nextState);
 	}
 }

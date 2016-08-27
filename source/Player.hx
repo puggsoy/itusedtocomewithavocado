@@ -22,7 +22,7 @@ class Player extends FlxSprite
 		
 		loadGraphic('assets/images/player-anim.png', true, 40, 80);
 		animation.add('idle', [0, 1, 2, 3, 4, 5, 6], 10, true);
-		animation.add('jump', [0], 0, false);
+		animation.add('jump', [3], 0, false);
 		animation.play('idle');
 		
 		setFacingFlip(FlxObject.LEFT, true, false);

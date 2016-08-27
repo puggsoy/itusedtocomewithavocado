@@ -96,7 +96,7 @@ class MenuState extends FlxState
 	
 	private function periodicGlitch(t:FlxTimer)
 	{
-		glitch.direction = new FlxRandom().bool() ? HORIZONTAL : VERTICAL;
+		glitch.direction = new FlxRandom().bool(70) ? HORIZONTAL : VERTICAL;
 		glitch.active = true;
 		tween.active = false;
 		FlxG.sound.music.pause();
