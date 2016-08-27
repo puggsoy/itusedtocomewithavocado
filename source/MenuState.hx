@@ -3,10 +3,16 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.addons.effects.chainable.FlxEffectSprite;
+import flixel.addons.effects.chainable.FlxGlitchEffect;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxRandom;
 import flixel.text.FlxText;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.ui.FlxButton;
 import flixel.math.FlxMath;
+import flixel.util.FlxTimer;
 
 class MenuState extends FlxState
 {
@@ -17,26 +23,33 @@ class MenuState extends FlxState
 	
 	private var selected:FlxSprite;
 	
+	private var glitch:FlxGlitchEffect;
+	private var glitchTimer:FlxTimer;
+	
+	private var tween:FlxTween;
+	
 	override public function create():Void
 	{
 		FlxG.cameras.bgColor = 0xFF333333;
 		FlxG.camera.pixelPerfectRender = true;
 		
+		glitch = new FlxGlitchEffect(6, 1, 0.01, HORIZONTAL);
+		glitch.active = false;
+		
 		var largeAvo:FlxSprite = new FlxSprite(0, 0, 'assets/images/avocadolarge.png');
-		largeAvo.antialiasing = true;
+		var largeAvoEffect:FlxEffectSprite = new FlxEffectSprite(largeAvo, [glitch]);
 		var title:FlxSprite = new FlxSprite(largeAvo.x + (largeAvo.width + 12), largeAvo.y + 32, 'assets/images/title.png');
 		
 		logoGroup = new FlxSpriteGroup();
-		logoGroup.add(largeAvo);
+		logoGroup.add(largeAvoEffect);
 		logoGroup.add(title);
 		logoGroup.x = (FlxG.width / 2) - (logoGroup.width / 2);
 		logoGroup.y = (FlxG.height / 3) - (logoGroup.height / 2);
 		
+		tween = FlxTween.linearMotion(title, title.x, title.y - 20, title.x, title.y + 20, 2, true, {type: FlxTween.PINGPONG, ease: FlxEase.quadInOut});
+		
 		newGame = new FlxSprite(logoGroup.x + (logoGroup.width / 2), logoGroup.y + logoGroup.height + 80, 'assets/images/newgame.png');
 		newGame.x -= (newGame.width / 2);
-		
-		
-		
 		quit = new FlxSprite(newGame.x + (newGame.width / 2), newGame.y + newGame.height + 40, 'assets/images/quit.png');
 		quit.x -= (quit.width / 2);
 		
@@ -49,31 +62,42 @@ class MenuState extends FlxState
 		
 		selected = newGame;
 		
+		glitchTimer = new FlxTimer();
+		glitchTimer.start(new FlxRandom().float(1, 3), periodicGlitch);
+		
 		super.create();
 	}
 	
-	private function buttonize(b:FlxSprite)
-	{
-		
-		FlxG.mouse.getPosition();
-	}
-
 	override public function update(elapsed:Float):Void
 	{
+		
+		
 		if (newGame.overlapsPoint(FlxG.mouse.getPosition())) selected = newGame;
 		else
 		if (quit.overlapsPoint(FlxG.mouse.getPosition())) selected = quit;
 		
 		if (FlxG.mouse.justPressed)
 		{
-			if (selected == newGame) FlxG.switchState(new PlayState());
+			if (selected == newGame && newGame.overlapsPoint(FlxG.mouse.getPosition())) FlxG.switchState(new PlayState());
 			else
-			if (selected == quit) Sys.exit(0);
+			if (selected == quit && quit.overlapsPoint(FlxG.mouse.getPosition())) Sys.exit(0);
 		}
 		
 		smallAvo.x = selected.x - smallAvo.width - 8;
 		smallAvo.y = selected.y - 14;
 		
 		super.update(elapsed);
+	}
+	
+	private function periodicGlitch(t:FlxTimer)
+	{
+		glitch.direction = new FlxRandom().bool() ? HORIZONTAL : VERTICAL;
+		
+		glitch.active = true;
+		new FlxTimer().start(0.25, function(t:FlxTimer)
+		{
+			glitch.active = false;
+			glitchTimer.start(new FlxRandom().float(1, 3), periodicGlitch);
+		});
 	}
 }
