@@ -124,6 +124,7 @@ class PlayState extends FlxState
 	{
 		FlxG.collide(tileMap, player);
 		
+		
 		super.update(elapsed);
 	}
 }
