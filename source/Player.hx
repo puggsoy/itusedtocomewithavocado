@@ -35,7 +35,21 @@ class Player extends FlxSprite
 	{
 		updateMovement();
 		updateAnim();
+		
+		if ((isTouching(FlxObject.FLOOR) && isTouching(FlxObject.CEILING)) ||
+			(isTouching(FlxObject.LEFT) && isTouching(FlxObject.RIGHT)))
+		{
+			kill();
+		}
+		
 		super.update(elapsed);
+	}
+	
+	override public function kill():Void 
+	{
+		super.kill();
+		
+		FlxG.switchState(new MenuState());
 	}
 	
 	private function updateMovement():Void 

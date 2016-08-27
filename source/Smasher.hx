@@ -1,7 +1,9 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.tile.FlxTilemap;
 import flixel.util.FlxTimer;
@@ -27,12 +29,15 @@ class Smasher extends FlxSprite
 		initialY = Std.int(y);
 		this.stopTiles = stopTiles;
 		
+		immovable = true;
+		
 		velocity.y = speed;
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
-		if (FlxG.collide(this, stopTiles) || y < initialY)
+		//if (FlxG.collide(this, stopTiles) || y < initialY)
+		if ((movement == DOWN && stopTiles.overlaps(this)) || y < initialY)
 		{
 			if(y < initialY) y = initialY;
 			

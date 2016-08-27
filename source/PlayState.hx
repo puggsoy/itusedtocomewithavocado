@@ -122,7 +122,8 @@ class PlayState extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
-		FlxG.collide(tileMap, player);
+		FlxG.collide(player, tileMap);
+		FlxG.collide(player, smashers);
 		
 		
 		super.update(elapsed);
