@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import flixel.tile.FlxTilemap;
@@ -18,7 +19,7 @@ class PlayState extends FlxState
 	private static inline var WIDTH_IN_TILES:Int = 200;
 	private static inline var HEIGHT_IN_TILES:Int = 100;
 	
-	private static inline var LEVEL_FILE:String = 'assets/data/lvl1.tmx';
+	private static inline var LEVEL_FILE:String = 'assets/data/lvl2.tmx';
 	private static inline var TILES_FILE:String = 'assets/images/simple-tiles.png';
 	
 	private var map:Array<Array<Int>>;
@@ -43,6 +44,8 @@ class PlayState extends FlxState
 		add(smashers);
 		
 		FlxG.sound.playMusic('assets/music/ingame.ogg');
+		
+		persistentUpdate = true;
 		
 		super.create();
 	}
@@ -128,6 +131,16 @@ class PlayState extends FlxState
 		FlxG.collide(player, tileMap);
 		FlxG.collide(player, smashers);
 		
-		
+		if (FlxG.keys.justPressed.ESCAPE && subState == null)
+		{
+			openSubState(new PauseState());
+		}
+	}
+	
+	override public function switchTo(nextState:FlxState):Bool 
+	{
+		trace('foo');
+		subState.close();
+		return super.switchTo(nextState);
 	}
 }

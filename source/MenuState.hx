@@ -68,6 +68,7 @@ class MenuState extends FlxState
 		glitchTimer.start(new FlxRandom().float(1, 4), periodicGlitch);
 		
 		//Music
+		FlxG.sound.cacheAll();
 		FlxG.sound.muted = false;
 		FlxG.sound.playMusic('assets/music/mainmenu.ogg');
 		
