@@ -6,5 +6,5 @@ package;
  */
 class Reg
 {
-	public static inline var GRAVITY:Int = 300;
+	public static inline var GRAVITY:Int = 350;
 }

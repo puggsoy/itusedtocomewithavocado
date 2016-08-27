@@ -4,6 +4,7 @@ import flixel.FlxCamera;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
 import flixel.tile.FlxTilemap;
@@ -17,10 +18,14 @@ class PlayState extends FlxState
 	private static inline var WIDTH_IN_TILES:Int = 200;
 	private static inline var HEIGHT_IN_TILES:Int = 100;
 	
-	private var player:Player;
+	private static inline var LEVEL_FILE:String = 'assets/data/lvl1.tmx';
+	private static inline var TILES_FILE:String = 'assets/images/simple-tiles.png';
 	
 	private var map:Array<Array<Int>>;
 	private var tileMap:FlxTilemap;
+	
+	private var player:Player;
+	private var smashers:FlxSpriteGroup;
 	
 	override public function create():Void
 	{
@@ -35,6 +40,8 @@ class PlayState extends FlxState
 		FlxG.camera.setScrollBounds(0, TILE_SIZE * WIDTH_IN_TILES, 0, TILE_SIZE * HEIGHT_IN_TILES);
 		FlxG.camera.follow(player);
 		
+		add(smashers);
+		
 		super.create();
 	}
 	
@@ -42,7 +49,7 @@ class PlayState extends FlxState
 	{
 		tileMap = new FlxTilemap();
 		
-		var s:String = Assets.getText('assets/data/lvl1.tmx');
+		var s:String = Assets.getText(LEVEL_FILE);
 		
 		var mapXml:Xml = Xml.parse(s).firstElement();
 		
@@ -55,11 +62,12 @@ class PlayState extends FlxState
 			else
 			if (elem.nodeName == 'objectgroup')
 			{
-				if (elem.get('name').toLowerCase() == 'player')
+				switch(elem.get('name').toLowerCase())
 				{
-					var o:Xml = elem.firstElement();
-					player.x = Std.parseFloat(o.get('x'));
-					player.y = Std.parseFloat(o.get('y'));
+					case 'player':
+						loadPlayer(elem.firstElement());
+					case 'smashers':
+						loadSmashers(elem);
 				}
 			}
 		}
@@ -91,11 +99,25 @@ class PlayState extends FlxState
 			map.push(row);
 		}
 		
-		trace(map.length);
-		trace(map[0].length);
-		
-		tileMap.loadMapFrom2DArray(map, 'assets/images/simpletiles.png', TILE_SIZE, TILE_SIZE, OFF, 1, 1, 1);
+		tileMap.loadMapFrom2DArray(map, TILES_FILE, TILE_SIZE, TILE_SIZE, OFF, 1, 1, 1);
 		add(tileMap);
+	}
+	
+	private function loadPlayer(obj:Xml)
+	{
+		player.x = Std.parseFloat(obj.get('x'));
+		player.y = Std.parseFloat(obj.get('y'));
+	}
+	
+	private function loadSmashers(og:Xml)
+	{
+		smashers = new FlxSpriteGroup();
+		
+		for (elem in og.elements())
+		{
+			var sm:Smasher = new Smasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
+			smashers.add(sm);
+		}
 	}
 	
 	override public function update(elapsed:Float):Void
