@@ -7,6 +7,7 @@ import flixel.addons.effects.chainable.FlxEffectSprite;
 import flixel.addons.effects.chainable.FlxGlitchEffect;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRandom;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -30,6 +31,7 @@ class MenuState extends FlxState
 	
 	override public function create():Void
 	{
+		FlxG.mouse.useSystemCursor = true;
 		FlxG.cameras.bgColor = 0xFF333333;
 		FlxG.camera.pixelPerfectRender = true;
 		
@@ -63,15 +65,17 @@ class MenuState extends FlxState
 		selected = newGame;
 		
 		glitchTimer = new FlxTimer();
-		glitchTimer.start(new FlxRandom().float(1, 3), periodicGlitch);
+		glitchTimer.start(new FlxRandom().float(1, 4), periodicGlitch);
+		
+		//Music
+		FlxG.sound.muted = false;
+		FlxG.sound.playMusic('assets/music/mainmenu.ogg');
 		
 		super.create();
 	}
 	
 	override public function update(elapsed:Float):Void
 	{
-		
-		
 		if (newGame.overlapsPoint(FlxG.mouse.getPosition())) selected = newGame;
 		else
 		if (quit.overlapsPoint(FlxG.mouse.getPosition())) selected = quit;
@@ -92,12 +96,16 @@ class MenuState extends FlxState
 	private function periodicGlitch(t:FlxTimer)
 	{
 		glitch.direction = new FlxRandom().bool() ? HORIZONTAL : VERTICAL;
-		
 		glitch.active = true;
+		tween.active = false;
+		FlxG.sound.music.pause();
+		
 		new FlxTimer().start(0.25, function(t:FlxTimer)
 		{
 			glitch.active = false;
-			glitchTimer.start(new FlxRandom().float(1, 3), periodicGlitch);
+			tween.active = true;
+			FlxG.sound.music.resume();
+			glitchTimer.start(new FlxRandom().float(1, 4), periodicGlitch);
 		});
 	}
 }

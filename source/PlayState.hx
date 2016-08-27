@@ -42,6 +42,8 @@ class PlayState extends FlxState
 		
 		add(smashers);
 		
+		FlxG.sound.playMusic('assets/music/ingame.ogg');
+		
 		super.create();
 	}
 	
@@ -122,10 +124,10 @@ class PlayState extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
+		super.update(elapsed);
 		FlxG.collide(player, tileMap);
 		FlxG.collide(player, smashers);
 		
 		
-		super.update(elapsed);
 	}
 }
