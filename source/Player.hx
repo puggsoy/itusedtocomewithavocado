@@ -16,6 +16,8 @@ class Player extends FlxSprite
 	private var walkPower:Int = 100;
 	private var jumpPower:Int = 200;
 	
+	public var paused:Bool = false;
+	
 	public function new(?X:Float=0, ?Y:Float=0) 
 	{
 		super(X, Y);
@@ -33,22 +35,23 @@ class Player extends FlxSprite
 	
 	override public function update(elapsed:Float):Void 
 	{
-		updateMovement();
-		updateAnim();
-		
 		if ((isTouching(FlxObject.FLOOR) && isTouching(FlxObject.CEILING)) ||
 			(isTouching(FlxObject.LEFT) && isTouching(FlxObject.RIGHT)))
 		{
 			kill();
 		}
 		
+		if (paused) return;
+		
+		updateMovement();
+		updateAnim();
 		super.update(elapsed);
 	}
 	
 	override public function kill():Void 
 	{
 		super.kill();
-		
+		trace('foo');
 		FlxG.switchState(new MenuState());
 	}
 	

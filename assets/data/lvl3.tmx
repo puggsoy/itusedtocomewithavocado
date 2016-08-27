@@ -119,13 +119,13 @@
 </data>
  </layer>
  <objectgroup name="Player">
-  <object id="1" x="32" y="736" width="40" height="80"/>
+  <object id="1" x="40" y="736" width="40" height="80"/>
  </objectgroup>
  <objectgroup name="Exit">
   <object id="23" x="736" y="928" width="40" height="80"/>
  </objectgroup>
  <objectgroup name="Smashers">
-  <object id="7" gid="7" x="32" y="576" width="192" height="96"/>
+  <object id="7" gid="7" x="32" y="128" width="192" height="96"/>
   <object id="16" gid="7" x="480" y="320" width="192" height="96"/>
   <object id="18" gid="8" x="928" y="384" width="32" height="64"/>
   <object id="20" gid="8" x="960" y="544" width="32" height="64"/>

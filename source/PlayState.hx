@@ -5,6 +5,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.group.FlxSpriteGroup;
+import flixel.math.FlxRect;
 import flixel.system.FlxAssets;
 import flixel.text.FlxText;
 import flixel.tile.FlxBaseTilemap.FlxTilemapAutoTiling;
@@ -28,6 +29,8 @@ class PlayState extends FlxState
 	private var player:Player;
 	private var smashers:FlxSpriteGroup;
 	
+	private var paused:Bool = false;
+	
 	public function new(level:Int = 1)
 	{
 		levelFile = StringTools.replace(levelFile, '#', Std.string(level));
@@ -48,6 +51,7 @@ class PlayState extends FlxState
 		loadLevel();
 		
 		add(player);
+		FlxG.worldBounds.setSize(TILE_SIZE * WIDTH_IN_TILES, TILE_SIZE * HEIGHT_IN_TILES);
 		FlxG.camera.setScrollBounds(0, TILE_SIZE * WIDTH_IN_TILES, 0, TILE_SIZE * HEIGHT_IN_TILES);
 		FlxG.camera.follow(player);
 		
@@ -141,9 +145,35 @@ class PlayState extends FlxState
 		FlxG.collide(player, tileMap);
 		FlxG.collide(player, smashers);
 		
-		if (FlxG.keys.justPressed.ESCAPE && subState == null)
+		if (FlxG.keys.justPressed.ESCAPE)
 		{
-			openSubState(new PauseState());
+			if (subState == null)
+			{
+				paused = true;
+				
+				for (m in members)
+				{
+					m.active = true;
+				}
+				
+				player.paused = true;
+				
+				openSubState(new PauseState());
+			}
+			else
+			{
+				paused = false;
+				
+				for (m in members)
+				{
+					m.active = false;
+				}
+				
+				player.paused = false;
+				player.active = true;
+				
+				subState.close();
+			}
 		}
 	}
 	
