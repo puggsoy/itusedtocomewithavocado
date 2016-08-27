@@ -127,8 +127,10 @@
  <objectgroup name="Exit">
   <object id="17" x="1120" y="192" width="40" height="80"/>
  </objectgroup>
- <objectgroup name="Slider Platform">
+ <objectgroup name="Sliders">
   <object id="15" gid="9" x="448" y="320" width="128" height="32"/>
+ </objectgroup>
+ <objectgroup name="Smashers">
   <object id="18" gid="8" x="416" y="416" width="32" height="64"/>
  </objectgroup>
 </map>
