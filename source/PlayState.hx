@@ -151,10 +151,13 @@ class PlayState extends FlxState
 				case 11:
 					ob = new SideSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
 				case 12:
+					trace('foo');
 					ob = new Slider(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
 			}
 			
-			if(ob != null) obstacles.add(ob);
+			if (ob != null) obstacles.add(ob);
+			
+			trace(obstacles.length);
 		}
 	}
 	
