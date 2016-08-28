@@ -18,7 +18,7 @@ class PauseState extends FlxSubState
 	{
 		super(FlxColor.TRANSPARENT);
 		
-		FlxG.sound.music.pause();
+		FlxG.sound.music.volume = 0;
 		pauseMusic = FlxG.sound.load('assets/music/pausemenu.ogg', 1, true, null, true, true);
 		//pauseMusic.loadEmbedded('assets/music/pausemenu.ogg', true, true);
 		//pauseMusic.play();
@@ -33,7 +33,7 @@ class PauseState extends FlxSubState
 	
 	override public function close():Void 
 	{
-		FlxG.sound.music.resume();
+		FlxG.sound.music.volume = 1;
 		pauseMusic.stop();
 		super.close();
 	}

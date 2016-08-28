@@ -132,6 +132,6 @@
   <object id="23" gid="11" x="32" y="1024" width="32" height="64"/>
  </objectgroup>
  <objectgroup name="Slider">
-  <object id="21" gid="12" x="64" y="928" width="128" height="32"/>
+  <object id="21" gid="12" x="64" y="936" width="128" height="32"/>
  </objectgroup>
 </map>

@@ -19,6 +19,7 @@ class PlayState extends FlxState
 	private static inline var TILE_SIZE:Int = 32;
 	private static inline var WIDTH_IN_TILES:Int = 200;
 	private static inline var HEIGHT_IN_TILES:Int = 100;
+	private static inline var LEVEL_NUM:Int = 3;
 	
 	private static inline var TILES_FILE:String = 'assets/images/simple-tiles.png';
 	private var levelFile:String = 'assets/data/lvl#.tmx';
@@ -29,6 +30,7 @@ class PlayState extends FlxState
 	
 	private var player:Player;
 	private var obstacles:FlxSpriteGroup;
+	private var exit:Exit;
 	
 	private var paused:Bool = false;
 	
@@ -56,6 +58,8 @@ class PlayState extends FlxState
 		
 		add(obstacles);
 		
+		add(exit);
+		
 		FlxG.sound.playMusic('assets/music/ingame.ogg', 0.8);
 		
 		persistentUpdate = true;
@@ -70,6 +74,7 @@ class PlayState extends FlxState
 		tileMap = new FlxTilemap();
 		obstacles = new FlxSpriteGroup();
 		player = new Player();
+		exit = new Exit();
 		
 		var s:String = Assets.getText(levelFile);
 		
@@ -90,6 +95,8 @@ class PlayState extends FlxState
 						loadPlayer(elem.firstElement());
 					case 'smashers', 'sliders':
 						loadObstacles(elem);
+					case 'exit':
+						loadExit(elem.firstElement());
 				}
 			}
 		}
@@ -139,11 +146,11 @@ class PlayState extends FlxState
 			
 			switch(Std.parseInt(elem.get('gid')))
 			{
-				case 7:
+				case 10:
 					ob = new DownSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
-				case 8:
+				case 11:
 					ob = new SideSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
-				case 9:
+				case 12:
 					ob = new Slider(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
 			}
 			
@@ -151,11 +158,23 @@ class PlayState extends FlxState
 		}
 	}
 	
+	private function loadExit(obj:Xml)
+	{
+		exit.x = Std.parseFloat(obj.get('x'));
+		exit.y = Std.parseFloat(obj.get('y'));
+	}
+	
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
 		FlxG.collide(player, tileMap);
 		FlxG.collide(player, obstacles);
+		
+		if (FlxG.overlap(player, exit))
+		{
+			if (currentLevel >= LEVEL_NUM) FlxG.switchState(new MenuState());
+			else FlxG.switchState(new PlayState(currentLevel + 1));
+		}
 		
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
@@ -189,6 +208,7 @@ class PlayState extends FlxState
 		}
 		
 		player.paused = true;
+		exit.active = true;
 	}
 	
 	private function unpause()
@@ -202,6 +222,7 @@ class PlayState extends FlxState
 		
 		player.paused = false;
 		player.active = true;
+		exit.active = true;
 	}
 	
 	override public function switchTo(nextState:FlxState):Bool 
