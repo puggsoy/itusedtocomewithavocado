@@ -15,41 +15,43 @@ import flixel.util.FlxTimer;
 class SideSmasher extends FlxSprite
 {
 	private var stopTiles:FlxTilemap;
-	private var initialX:Int;
 	
 	private var movement:MoveDir = RIGHT;
 	private var speed:Int = 100;
 	private var pause:Int = 1;
+	
+	private var moveStart:Bool = true;
 	
 	public function new(X:Float=0, Y:Float=0, stopTiles:FlxTilemap) 
 	{
 		super(X, Y, 'assets/images/sidecrush.png');
 		
 		y -= height;
-		initialX = Std.int(x);
 		this.stopTiles = stopTiles;
 		
 		immovable = true;
 		
-		velocity.x = speed;
+		if (stopTiles.overlapsAt(stopTiles.x - 1, stopTiles.y, this)) movement = LEFT;
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
-		//if (FlxG.collide(this, stopTiles) || y < initialY)
-		if ((movement == RIGHT && stopTiles.overlaps(this)) || x < initialX)
+		if (!moveStart && (movement == RIGHT || movement == LEFT) && stopTiles.overlaps(this))
 		{
-			if(x < initialX) x = initialX;
-			
 			velocity.x = 0;
 			
 			var opp:MoveDir = (movement == LEFT) ? RIGHT : LEFT;
 			movement = NONE;
 			
-			new FlxTimer().start(pause, function(t:FlxTimer){ movement = opp; });
+			new FlxTimer().start(pause, function(t:FlxTimer){
+				movement = opp;
+				moveStart = true;
+			});
 		}
 		
 		if (movement != NONE) velocity.x = (movement == LEFT) ? -speed : speed;
+		
+		moveStart = false;
 		
 		super.update(elapsed);
 	}

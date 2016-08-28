@@ -15,41 +15,43 @@ import flixel.util.FlxTimer;
 class DownSmasher extends FlxSprite
 {
 	private var stopTiles:FlxTilemap;
-	private var initialY:Int;
 	
 	private var movement:MoveDir = DOWN;
 	private var speed:Int = 100;
 	private var pause:Int = 1;
+	
+	private var moveStart:Bool = true;
 	
 	public function new(X:Float=0, Y:Float=0, stopTiles:FlxTilemap) 
 	{
 		super(X, Y, 'assets/images/smasher-base.png');
 		
 		y -= height;
-		initialY = Std.int(y);
 		this.stopTiles = stopTiles;
 		
 		immovable = true;
 		
-		velocity.y = speed;
+		if (stopTiles.overlapsAt(stopTiles.x, stopTiles.y - 1, this)) movement = UP;
 	}
 	
 	override public function update(elapsed:Float):Void 
 	{
-		//if (FlxG.collide(this, stopTiles) || y < initialY)
-		if ((movement == DOWN && stopTiles.overlaps(this)) || y < initialY)
+		if (!moveStart && (movement == DOWN || movement == UP) && stopTiles.overlaps(this))
 		{
-			if(y < initialY) y = initialY;
-			
 			velocity.y = 0;
 			
 			var opp:MoveDir = (movement == UP) ? DOWN : UP;
 			movement = NONE;
 			
-			new FlxTimer().start(pause, function(t:FlxTimer){ movement = opp; });
+			new FlxTimer().start(pause, function(t:FlxTimer){
+				movement = opp;
+				moveStart = true;
+			});
 		}
 		
 		if (movement != NONE) velocity.y = (movement == UP) ? -speed : speed;
+		
+		moveStart = false;
 		
 		super.update(elapsed);
 	}

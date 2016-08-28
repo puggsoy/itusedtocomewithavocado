@@ -22,6 +22,7 @@ class PlayState extends FlxState
 	
 	private static inline var TILES_FILE:String = 'assets/images/simple-tiles.png';
 	private var levelFile:String = 'assets/data/lvl#.tmx';
+	private var currentLevel:Int;
 	
 	private var map:Array<Array<Int>>;
 	private var tileMap:FlxTilemap;
@@ -34,6 +35,7 @@ class PlayState extends FlxState
 	public function new(level:Int = 1)
 	{
 		levelFile = StringTools.replace(levelFile, '#', Std.string(level));
+		currentLevel = level;
 		super();
 	}
 	
@@ -54,11 +56,13 @@ class PlayState extends FlxState
 		
 		add(obstacles);
 		
-		FlxG.sound.playMusic('assets/music/ingame.ogg');
+		FlxG.sound.playMusic('assets/music/ingame.ogg', 0.8);
 		
 		persistentUpdate = true;
 		
 		super.create();
+		
+		unpause();
 	}
 	
 	private function loadLevel()
@@ -156,32 +160,47 @@ class PlayState extends FlxState
 		{
 			if (subState == null)
 			{
-				paused = true;
-				
-				for (m in members)
-				{
-					m.active = true;
-				}
-				
-				player.paused = true;
+				pause();
 				
 				openSubState(new PauseState());
 			}
 			else
 			{
-				paused = false;
-				
-				for (m in members)
-				{
-					m.active = false;
-				}
-				
-				player.paused = false;
-				player.active = true;
+				unpause();
 				
 				subState.close();
 			}
 		}
+		else
+		if (FlxG.keys.justPressed.R)
+		{
+			FlxG.switchState(new PlayState(currentLevel));
+		}
+	}
+	
+	private function pause()
+	{
+		paused = true;
+		
+		for (m in members)
+		{
+			m.active = true;
+		}
+		
+		player.paused = true;
+	}
+	
+	private function unpause()
+	{
+		paused = false;
+		
+		for (m in members)
+		{
+			m.active = false;
+		}
+		
+		player.paused = false;
+		player.active = true;
 	}
 	
 	override public function switchTo(nextState:FlxState):Bool 

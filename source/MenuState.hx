@@ -77,7 +77,7 @@ class MenuState extends FlxState
 		
 		//Music
 		FlxG.sound.cacheAll();
-		FlxG.sound.muted = true;
+		//FlxG.sound.muted = true;
 		FlxG.sound.playMusic('assets/music/mainmenu.ogg');
 		
 		super.create();
@@ -128,13 +128,13 @@ class MenuState extends FlxState
 		glitch.direction = new FlxRandom().bool(70) ? HORIZONTAL : VERTICAL;
 		glitch.active = true;
 		tween.active = false;
-		FlxG.sound.music.pause();
+		FlxG.sound.music.volume = 0;
 		
 		new FlxTimer().start(0.25, function(t:FlxTimer)
 		{
 			glitch.active = false;
 			tween.active = true;
-			FlxG.sound.music.resume();
+			FlxG.sound.music.volume = 1;
 			glitchTimer.start(new FlxRandom().float(1, 4), periodicGlitch);
 		});
 	}
