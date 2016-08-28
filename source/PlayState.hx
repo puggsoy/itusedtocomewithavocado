@@ -88,7 +88,7 @@ class PlayState extends FlxState
 				{
 					case 'player':
 						loadPlayer(elem.firstElement());
-					case 'smashers', 'slider':
+					case 'smashers', 'sliders':
 						loadObstacles(elem);
 				}
 			}
@@ -141,9 +141,10 @@ class PlayState extends FlxState
 			{
 				case 7:
 					ob = new DownSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
-					ob.y + 1;
 				case 8:
 					ob = new SideSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
+				case 9:
+					ob = new Slider(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
 			}
 			
 			if(ob != null) obstacles.add(ob);

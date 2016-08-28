@@ -17,8 +17,8 @@ class DownSmasher extends FlxSprite
 	private var stopTiles:FlxTilemap;
 	
 	private var movement:MoveDir = DOWN;
-	private var speed:Int = 100;
-	private var pause:Int = 1;
+	private var speed:Int = 300;
+	private var pause:Float = 0.1;
 	
 	private var moveStart:Bool = true;
 	

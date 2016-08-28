@@ -12,19 +12,19 @@ import flixel.util.FlxTimer;
  * ...
  * @author Sami
  */
-class SideSmasher extends FlxSprite
+class Slider extends FlxSprite
 {
 	private var stopTiles:FlxTilemap;
 	
 	private var movement:MoveDir = RIGHT;
-	private var speed:Int = 300;
-	private var pause:Float = 0.1;
+	private var speed:Int = 100;
+	private var pause:Int = 1;
 	
 	private var moveStart:Bool = true;
 	
 	public function new(X:Float=0, Y:Float=0, stopTiles:FlxTilemap) 
 	{
-		super(X, Y, 'assets/images/sidecrush.png');
+		super(X, Y, 'assets/images/slider.png');
 		
 		y -= height;
 		this.stopTiles = stopTiles;
