@@ -16,7 +16,7 @@ class Player extends FlxSprite
 	private var walkPower:Int = 100;
 	private var jumpPower:Int = 200;
 	
-	public var paused:Bool = false;
+	public var paused(default, set):Bool = false;
 	
 	public function new(?X:Float=0, ?Y:Float=0) 
 	{
@@ -41,10 +41,12 @@ class Player extends FlxSprite
 			kill();
 		}
 		
-		if (paused) return;
+		if (!paused)
+		{
+			updateMovement();
+			updateAnim();
+		}
 		
-		updateMovement();
-		updateAnim();
 		super.update(elapsed);
 	}
 	
@@ -81,4 +83,15 @@ class Player extends FlxSprite
 		if (velocity.y != 0) animation.play('jump');
 		else animation.play('idle');
 	}
+	
+	function set_paused(value:Bool):Bool 
+	{
+		animation.paused = value;
+		
+		if (value) velocity.x = 0;
+		
+		return paused = value;
+	}
+	
+	
 }

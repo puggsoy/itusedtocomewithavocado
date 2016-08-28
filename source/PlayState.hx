@@ -66,8 +66,6 @@ class PlayState extends FlxState
 		tileMap = new FlxTilemap();
 		obstacles = new FlxSpriteGroup();
 		player = new Player();
-		trace(player.solid);
-		//player.solid = true;
 		
 		var s:String = Assets.getText(levelFile);
 		

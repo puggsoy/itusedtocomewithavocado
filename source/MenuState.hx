@@ -17,6 +17,8 @@ import flixel.util.FlxTimer;
 
 class MenuState extends FlxState
 {
+	private static inline var START_LEVEL = 1;
+	
 	private var logoGroup:FlxSpriteGroup;
 	private var buttonsGroup:FlxSpriteGroup;
 	private var newGame:FlxSprite;
@@ -99,7 +101,7 @@ class MenuState extends FlxState
 		else
 		if (FlxG.keys.justPressed.ENTER)
 		{
-			if (selected == newGame) FlxG.switchState(new PlayState(2));
+			if (selected == newGame) FlxG.switchState(new PlayState(START_LEVEL));
 			else
 			if (selected == quit) Sys.exit(0);
 		}
@@ -110,7 +112,7 @@ class MenuState extends FlxState
 		
 		if (FlxG.mouse.justPressed)
 		{
-			if (selected == newGame && newGame.overlapsPoint(FlxG.mouse.getPosition())) FlxG.switchState(new PlayState(2));
+			if (selected == newGame && newGame.overlapsPoint(FlxG.mouse.getPosition())) FlxG.switchState(new PlayState(START_LEVEL));
 			else
 			if (selected == quit && quit.overlapsPoint(FlxG.mouse.getPosition())) Sys.exit(0);
 		}
