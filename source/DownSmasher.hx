@@ -12,7 +12,7 @@ import flixel.util.FlxTimer;
  * ...
  * @author Sami
  */
-class Smasher extends FlxSprite
+class DownSmasher extends FlxSprite
 {
 	private var stopTiles:FlxTilemap;
 	private var initialY:Int;

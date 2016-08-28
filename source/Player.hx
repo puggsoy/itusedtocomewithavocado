@@ -51,7 +51,6 @@ class Player extends FlxSprite
 	override public function kill():Void 
 	{
 		super.kill();
-		trace('foo');
 		FlxG.switchState(new MenuState());
 	}
 	
@@ -59,19 +58,19 @@ class Player extends FlxSprite
 	{
 		velocity.x = 0;
 		
-		if (FlxG.keys.pressed.LEFT)
+		if (FlxG.keys.pressed.LEFT || FlxG.keys.pressed.A)
 		{
 			velocity.x = -walkPower;
 			facing = FlxObject.LEFT;
 		}
 		else
-		if (FlxG.keys.pressed.RIGHT)
+		if (FlxG.keys.pressed.RIGHT || FlxG.keys.pressed.D)
 		{
 			velocity.x = walkPower;
 			facing = FlxObject.RIGHT;
 		}
 		
-		if (FlxG.keys.justPressed.UP && velocity.y == 0)
+		if ((FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W) && velocity.y == 0)
 		{
 			velocity.y = -jumpPower;
 		}

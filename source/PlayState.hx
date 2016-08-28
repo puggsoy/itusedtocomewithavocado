@@ -27,7 +27,7 @@ class PlayState extends FlxState
 	private var tileMap:FlxTilemap;
 	
 	private var player:Player;
-	private var smashers:FlxSpriteGroup;
+	private var obstacles:FlxSpriteGroup;
 	
 	private var paused:Bool = false;
 	
@@ -45,9 +45,6 @@ class PlayState extends FlxState
 		background.scrollFactor.set(0.1, 0.06);
 		add(background);
 		
-		player = new Player();
-		player.solid = true;
-		
 		loadLevel();
 		
 		add(player);
@@ -55,7 +52,7 @@ class PlayState extends FlxState
 		FlxG.camera.setScrollBounds(0, TILE_SIZE * WIDTH_IN_TILES, 0, TILE_SIZE * HEIGHT_IN_TILES);
 		FlxG.camera.follow(player);
 		
-		add(smashers);
+		add(obstacles);
 		
 		FlxG.sound.playMusic('assets/music/ingame.ogg');
 		
@@ -67,6 +64,10 @@ class PlayState extends FlxState
 	private function loadLevel()
 	{
 		tileMap = new FlxTilemap();
+		obstacles = new FlxSpriteGroup();
+		player = new Player();
+		trace(player.solid);
+		//player.solid = true;
 		
 		var s:String = Assets.getText(levelFile);
 		
@@ -85,8 +86,8 @@ class PlayState extends FlxState
 				{
 					case 'player':
 						loadPlayer(elem.firstElement());
-					case 'smashers':
-						loadSmashers(elem);
+					case 'smashers', 'slider':
+						loadObstacles(elem);
 				}
 			}
 		}
@@ -128,14 +129,22 @@ class PlayState extends FlxState
 		player.y = Std.parseFloat(obj.get('y'));
 	}
 	
-	private function loadSmashers(og:Xml)
+	private function loadObstacles(og:Xml)
 	{
-		smashers = new FlxSpriteGroup();
-		
 		for (elem in og.elements())
 		{
-			var sm:Smasher = new Smasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
-			smashers.add(sm);
+			var ob:FlxSprite = null;
+			
+			switch(Std.parseInt(elem.get('gid')))
+			{
+				case 7:
+					ob = new DownSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
+					ob.y + 1;
+				case 8:
+					ob = new SideSmasher(Std.parseInt(elem.get('x')), Std.parseInt(elem.get('y')), tileMap);
+			}
+			
+			if(ob != null) obstacles.add(ob);
 		}
 	}
 	
@@ -143,7 +152,7 @@ class PlayState extends FlxState
 	{
 		super.update(elapsed);
 		FlxG.collide(player, tileMap);
-		FlxG.collide(player, smashers);
+		FlxG.collide(player, obstacles);
 		
 		if (FlxG.keys.justPressed.ESCAPE)
 		{
