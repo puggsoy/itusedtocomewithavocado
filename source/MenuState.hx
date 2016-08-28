@@ -18,6 +18,7 @@ import flixel.util.FlxTimer;
 class MenuState extends FlxState
 {
 	private var logoGroup:FlxSpriteGroup;
+	private var buttonsGroup:FlxSpriteGroup;
 	private var newGame:FlxSprite;
 	private var quit:FlxSprite;
 	private var smallAvo:FlxSprite;
@@ -50,16 +51,21 @@ class MenuState extends FlxState
 		
 		tween = FlxTween.linearMotion(title, title.x, title.y - 20, title.x, title.y + 20, 2, true, {type: FlxTween.PINGPONG, ease: FlxEase.quadInOut});
 		
-		newGame = new FlxSprite(logoGroup.x + (logoGroup.width / 2), logoGroup.y + logoGroup.height + 80, 'assets/images/newgame.png');
+		newGame = new FlxSprite(0, 0, 'assets/images/newgame.png');
 		newGame.x -= (newGame.width / 2);
 		quit = new FlxSprite(newGame.x + (newGame.width / 2), newGame.y + newGame.height + 40, 'assets/images/quit.png');
 		quit.x -= (quit.width / 2);
 		
+		buttonsGroup = new FlxSpriteGroup();
+		buttonsGroup.add(newGame);
+		buttonsGroup.add(quit);
+		buttonsGroup.x = logoGroup.x + (logoGroup.width / 2);
+		buttonsGroup.y = logoGroup.y + logoGroup.height + 80;
+		
 		smallAvo = new FlxSprite(0, 0, 'assets/images/avocadosmall.png');
 		
 		add(logoGroup);
-		add(newGame);
-		add(quit);
+		add(buttonsGroup);
 		add(smallAvo);
 		
 		selected = newGame;
@@ -69,7 +75,7 @@ class MenuState extends FlxState
 		
 		//Music
 		FlxG.sound.cacheAll();
-		FlxG.sound.muted = false;
+		FlxG.sound.muted = true;
 		FlxG.sound.playMusic('assets/music/mainmenu.ogg');
 		
 		super.create();
@@ -77,13 +83,34 @@ class MenuState extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
+		if (FlxG.keys.justPressed.UP || FlxG.keys.justPressed.W)
+		{
+			var newIndex:Int = buttonsGroup.members.indexOf(selected) + 1;
+			if (newIndex >= buttonsGroup.members.length) newIndex = 0;
+			selected = buttonsGroup.members[newIndex];
+		}
+		else
+		if (FlxG.keys.justPressed.DOWN || FlxG.keys.justPressed.S)
+		{
+			var newIndex:Int = buttonsGroup.members.indexOf(selected) - 1;
+			if (newIndex < 0) newIndex = buttonsGroup.members.length - 1;
+			selected = buttonsGroup.members[newIndex];
+		}
+		else
+		if (FlxG.keys.justPressed.ENTER)
+		{
+			if (selected == newGame) FlxG.switchState(new PlayState(2));
+			else
+			if (selected == quit) Sys.exit(0);
+		}
+		
 		if (newGame.overlapsPoint(FlxG.mouse.getPosition())) selected = newGame;
 		else
 		if (quit.overlapsPoint(FlxG.mouse.getPosition())) selected = quit;
 		
 		if (FlxG.mouse.justPressed)
 		{
-			if (selected == newGame && newGame.overlapsPoint(FlxG.mouse.getPosition())) FlxG.switchState(new PlayState());
+			if (selected == newGame && newGame.overlapsPoint(FlxG.mouse.getPosition())) FlxG.switchState(new PlayState(2));
 			else
 			if (selected == quit && quit.overlapsPoint(FlxG.mouse.getPosition())) Sys.exit(0);
 		}
